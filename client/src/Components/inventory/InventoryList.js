@@ -1,62 +1,50 @@
-import React, { useState } from 'react';
-import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
+import React from 'react';
+import { 
+  Box, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableContainer, 
+  TableHead, 
+  TableRow, 
+  Paper, 
   IconButton,
   TextField,
-  Button,
   Typography
 } from '@mui/material';
-import { Add, Edit, Delete, Search } from '@mui/icons-material';
+import { Edit, Delete, Search } from '@mui/icons-material';
 
-const InventoryList = () => {
-  const [inventory, setInventory] = useState([
+const InventoryList = ({ onEdit }) => {
+  // Sample data - replace with real data
+  const [inventory, setInventory] = React.useState([
     { id: 1, name: 'Product A', sku: 'PROD001', quantity: 42, price: 19.99 },
     { id: 2, name: 'Product B', sku: 'PROD002', quantity: 15, price: 29.99 }
   ]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = React.useState('');
 
-  const filteredItems = inventory.filter(item =>
+  const filteredItems = inventory.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.sku.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom sx={{ color: 'primary.main' }}>
-        Inventory Management
-      </Typography>
-
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-        <TextField
-          variant="outlined"
-          placeholder="Search inventory..."
-          size="small"
-          sx={{ width: 300 }}
-          InputProps={{
-            startAdornment: <Search sx={{ mr: 1 }} />
-          }}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <Button
-          variant="contained"
-          color="secondary"
-          startIcon={<Add />}
-        >
-          Add Item
-        </Button>
-      </Box>
-
+    <Box sx={{ p: 2 }}>
+      <TextField
+        fullWidth
+        label="Search inventory..."
+        variant="outlined"
+        size="small"
+        sx={{ mb: 2 }}
+        InputProps={{
+          startAdornment: <Search sx={{ color: 'action.active', mr: 1 }} />
+        }}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      
       <TableContainer component={Paper}>
         <Table>
-          <TableHead sx={{ bgcolor: 'primary.light' }}>
+          <TableHead sx={{ backgroundColor: 'primary.light' }}>
             <TableRow>
               <TableCell sx={{ color: 'white' }}>Name</TableCell>
               <TableCell sx={{ color: 'white' }}>SKU</TableCell>
@@ -73,7 +61,7 @@ const InventoryList = () => {
                 <TableCell>{item.quantity}</TableCell>
                 <TableCell>${item.price.toFixed(2)}</TableCell>
                 <TableCell>
-                  <IconButton color="primary">
+                  <IconButton color="primary" onClick={() => onEdit(item)}>
                     <Edit />
                   </IconButton>
                   <IconButton color="error">

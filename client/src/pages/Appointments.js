@@ -1,14 +1,24 @@
 import React, { useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Button,
-  Tabs,
-  Tab,
-  Paper
-} from '@mui/material';
-import { Add, Today, CalendarViewMonth } from '@mui/icons-material';
+
+import {Add,Today,CalendarViewMonth } from '@mui/icons-material';
+// Update the import path and filename as needed; for example, if the correct file is 'Calendar.js':
+
+import { Box, Button, Paper, Tab, Tabs, Typography } from '@mui/material';
 import Calendar from '../components/appointments/Calendar';
+class ErrorBoundary extends React.Component {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <Typography color="error">Error loading calendar</Typography>;
+    }
+    return this.props.children;
+  }
+}
 
 const Appointments = () => {
   const [tabValue, setTabValue] = useState('calendar');
@@ -20,6 +30,12 @@ const Appointments = () => {
 
   const handleViewChange = (newView) => {
     setView(newView);
+  };
+
+  // Placeholder for creating a new appointment
+  const handleNewAppointment = () => {
+    console.log('New appointment clicked');
+    // Add logic here (e.g., open a modal or navigate to a form)
   };
 
   return (
@@ -54,6 +70,7 @@ const Appointments = () => {
             variant="contained" 
             color="secondary" 
             startIcon={<Add />}
+            onClick={handleNewAppointment}
           >
             New Appointment
           </Button>
@@ -71,7 +88,9 @@ const Appointments = () => {
 
       <Paper elevation={3} sx={{ p: 2 }}>
         {tabValue === 'calendar' ? (
-          <Calendar view={view} />
+          <ErrorBoundary>
+            <Calendar view={view} />
+          </ErrorBoundary>
         ) : (
           <Box sx={{ p: 2 }}>
             <Typography>Appointment list view coming soon</Typography>

@@ -1,95 +1,128 @@
-import React from 'react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { CssBaseline, Box, AppBar, Toolbar, Typography } from '@mui/material';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { 
+  ThemeProvider, 
+  createTheme, 
+  CssBaseline, 
+  Box, 
+  Toolbar,
+  useMediaQuery 
+} from '@mui/material';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { purple, pink } from '@mui/material/colors';
-import ClientList from './components/clients/ClientList';
-import InventoryList from './components/inventory/InventoryList';
-import InvoiceList from './components/invoices/InvoiceList';
-import Calendar from './components/appointments/Calendar';
+import Navbar from './Components/layout/Navbar';
+import Sidebar from './Components/layout/Sidebar';
 
-// ... (keep your existing theme and floralBackground code)
+// Page Components
+import Dashboard from './pages/Dashboard';
+import Clients from './pages/Clients';
+import ClientView from './Components/clients/ClientView';
+import ClientForm from './Components/clients/ClientForm';
+import Appointments from './pages/Appointments';
+import Inventory from './pages/Inventory';
+import Invoices from './pages/Invoices';
+import Settings from './pages/Settings';
+import NotFound from './pages/NotFound';
 
-function NavBar() {
-  const location = useLocation();
-  
+// Floral purple theme
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: purple[700],
+      light: purple[500],
+      dark: purple[900],
+    },
+    secondary: {
+      main: pink['A400'],
+    },
+    background: {
+      default: '#faf5ff',
+      paper: '#ffffff',
+    },
+  },
+  typography: {
+    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+  },
+});
+
+const App = () => {
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const handleSidebarToggle = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
-    <AppBar position="fixed" color="primary" sx={{ top: 'auto', bottom: 0 }}>
-      <Toolbar sx={{ justifyContent: 'space-around' }}>
-        <Link to="/clients" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <Box sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center',
-            color: location.pathname === '/clients' ? pink['A400'] : 'inherit'
-          }}>
-            <People />
-            <Typography variant="caption">Clients</Typography>
+    <Router>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+          <Navbar 
+            onSidebarToggle={isMobile ? handleDrawerToggle : handleSidebarToggle} 
+          />
+          <Sidebar 
+            isOpen={sidebarOpen} 
+            onClose={handleDrawerToggle}
+            isMobile={isMobile}
+          />
+          
+          {/* Main Content Area */}
+          <Box 
+            component="main" 
+            sx={{ 
+              flexGrow: 1, 
+              p: 3,
+              marginLeft: { 
+                xs: 0, 
+                md: sidebarOpen ? '240px' : '56px' 
+              },
+              transition: theme.transitions.create('margin', {
+                easing: theme.transitions.easing.sharp,
+                duration: sidebarOpen 
+                  ? theme.transitions.duration.enteringScreen 
+                  : theme.transitions.duration.leavingScreen,
+              }),
+              width: { 
+                xs: '100%', 
+                md: `calc(100% - ${sidebarOpen ? 240 : 56}px)` 
+              },
+            }}
+          >
+            <Toolbar /> {/* Spacer for AppBar */}
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              
+              {/* Clients Routes */}
+              <Route path="/clients" element={<Clients />} />
+              <Route path="/clients/:id" element={<ClientView />} />
+              <Route path="/clients/new" element={<ClientForm />} />
+              <Route path="/clients/edit/:id" element={<ClientForm />} />
+              
+              {/* Appointments Route */}
+              <Route path="/appointments" element={<Appointments />} />
+              
+              {/* Inventory Routes */}
+              <Route path="/inventory" element={<Inventory />} />
+              
+              {/* Invoices Route */}
+              <Route path="/invoices" element={<Invoices />} />
+              
+              {/* Settings Route */}
+              <Route path="/settings" element={<Settings />} />
+              
+              {/* 404 Catch-all */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
           </Box>
-        </Link>
-        
-        <Link to="/appointments" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <Box sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center',
-            color: location.pathname === '/appointments' ? pink['A400'] : 'inherit'
-          }}>
-            <CalendarToday />
-            <Typography variant="caption">Calendar</Typography>
-          </Box>
-        </Link>
-        
-        <Link to="/inventory" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <Box sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center',
-            color: location.pathname === '/inventory' ? pink['A400'] : 'inherit'
-          }}>
-            <Inventory />
-            <Typography variant="caption">Inventory</Typography>
-          </Box>
-        </Link>
-        
-        <Link to="/invoices" style={{ textDecoration: 'none', color: 'inherit' }}>
-          <Box sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center',
-            color: location.pathname === '/invoices' ? pink['A400'] : 'inherit'
-          }}>
-            <Receipt />
-            <Typography variant="caption">Invoices</Typography>
-          </Box>
-        </Link>
-      </Toolbar>
-    </AppBar>
-  );
-}
-
-function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Box sx={{ display: 'flex', ...floralBackground }}>
-        {/* Main Content */}
-        <Box component="main" sx={{ flexGrow: 1, p: 3, pb: 10 }}>
-           <Routes location={location} key={location.key}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/clients" element={<Clients />} />
-            <Route path="/clients/:id" element={<ClientView />} />
-            <Route path="/clients/edit/:id" element={<ClientForm />} />
-            <Route path="/appointments" element={<Appointments />} />
-            <Route path="/inventory" element={<Inventory />} />
-            <Route path="/invoices" element={<Invoices />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
         </Box>
-        <NavBar />
-      </Box>
-    </ThemeProvider>
+      </ThemeProvider>
+    </Router>
   );
-}
+};
 
 export default App;

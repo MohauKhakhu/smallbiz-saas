@@ -7,9 +7,8 @@ import {
   Tab
 } from '@mui/material';
 import { Add, PictureAsPdf, Receipt } from '@mui/icons-material';
-import InvoiceList from '../components/invoices/InvoiceList';
-import InvoiceForm from '../Components/invoices/InvoiceForm';
-//import InvoiceForm from '../components/invoices/InvoiceForm';
+import InvoiceList from '../Components/invoices/InvoiceList';
+import InvoiceForm from '../Components/invoices/InvoiceForm'; // Use correct casing for 'Components'
 
 const Invoices = () => {
   const [tabValue, setTabValue] = useState('list');

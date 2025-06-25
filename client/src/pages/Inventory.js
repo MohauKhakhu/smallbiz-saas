@@ -4,43 +4,12 @@ import {
   Typography, 
   Button,
   Tabs,
-  Tab,
-  Paper
+  Tab
 } from '@mui/material';
-import { Add, Assessment, Inventory as InventoryIcon } from '@mui/icons-material';
-
-// Import components with fallbacks
-let InventoryList, InventoryForm, InventoryReport;
-
-try {
-  InventoryList = require('../components/inventory/InventoryList').default;
-} catch {
-  InventoryList = () => (
-    <Paper sx={{ p: 3, textAlign: 'center' }}>
-      <Typography>Inventory List component not found</Typography>
-    </Paper>
-  );
-}
-
-try {
-  InventoryForm = require('../components/inventory/InventoryForm').default;
-} catch {
-  InventoryForm = () => (
-    <Paper sx={{ p: 3, textAlign: 'center' }}>
-      <Typography>Inventory Form component not found</Typography>
-    </Paper>
-  );
-}
-
-try {
-  InventoryReport = require('../components/inventory/InventoryReport').default;
-} catch {
-  InventoryReport = () => (
-    <Paper sx={{ p: 3, textAlign: 'center' }}>
-      <Typography>Inventory Report component not found</Typography>
-    </Paper>
-  );
-}
+import { Add, Assessment } from '@mui/icons-material';
+import InventoryList from '../Components/inventory/InventoryList';
+import InventoryForm from '../Components/inventory/InventoryForm';
+import InventoryReport from '../Components/inventory/InventoryReport';
 
 const Inventory = () => {
   const [tabValue, setTabValue] = useState('list');
@@ -55,7 +24,8 @@ const Inventory = () => {
     setTabValue('form');
   };
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = (itemData) => {
+    console.log('Saved item:', itemData);
     setTabValue('list');
     setEditingItem(null);
   };
@@ -105,17 +75,15 @@ const Inventory = () => {
         <Tab value="report" label="Inventory Report" />
       </Tabs>
 
-      {tabValue === 'list' ? (
-        <InventoryList onEdit={handleEditItem} />
-      ) : tabValue === 'form' ? (
+      {tabValue === 'list' && <InventoryList onEdit={handleEditItem} />}
+      {tabValue === 'form' && (
         <InventoryForm 
           item={editingItem}
           onSave={handleFormSubmit}
           onCancel={() => setTabValue('list')}
         />
-      ) : (
-        <InventoryReport />
       )}
+      {tabValue === 'report' && <InventoryReport />}
     </Box>
   );
 };
