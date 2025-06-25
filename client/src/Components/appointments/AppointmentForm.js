@@ -10,10 +10,6 @@ import {
   FormControl,
   InputLabel,
   Select,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   InputAdornment
 } from '@mui/material';
 import { Save, Cancel, Person, CalendarToday, Schedule, LocationOn, Notes, Title } from '@mui/icons-material';

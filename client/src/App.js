@@ -1,27 +1,29 @@
-import React, { useState } from 'react';
-import { 
-  ThemeProvider, 
-  createTheme, 
-  CssBaseline, 
-  Box, 
-  Toolbar,
-  useMediaQuery 
-} from '@mui/material';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {
+  ThemeProvider,
+  createTheme,
+  CssBaseline,
+  Box,
+  Toolbar,
+  useMediaQuery,
+} from '@mui/material';
 import { purple, pink } from '@mui/material/colors';
-import Navbar from './Components/layout/Navbar';
-import Sidebar from './Components/layout/Sidebar';
+
 
 // Page Components
 import Dashboard from './pages/Dashboard';
 import Clients from './pages/Clients';
-import ClientView from './Components/clients/ClientView';
-import ClientForm from './Components/clients/ClientForm';
-import Appointments from './pages/Appointments';
+
 import Inventory from './pages/Inventory';
 import Invoices from './pages/Invoices';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
+import Navbar from './Components/layout/Navbar';
+import Sidebar from './Components/layout/Sidebar';
+import ClientView from './Components/clients/ClientView';
+import ClientForm from './Components/clients/ClientForm';
+import Appointments from './pages/Appointments';
 
 // Floral purple theme
 const theme = createTheme({
@@ -46,15 +48,16 @@ const theme = createTheme({
 
 const App = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+  const [isOpen, setIsOpen] = useState(!isMobile); // Sidebar open by default on desktop
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
+  // Sync sidebar state with screen size
+  useEffect(() => {
+    setIsOpen(!isMobile); // Close sidebar on mobile, open on desktop
+  }, [isMobile]);
 
   const handleSidebarToggle = () => {
-    setSidebarOpen(!sidebarOpen);
+    setIsOpen(!isOpen);
+    console.log('Sidebar toggled:', !isOpen); // For debugging
   };
 
   return (
@@ -62,59 +65,46 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-          <Navbar 
-            onSidebarToggle={isMobile ? handleDrawerToggle : handleSidebarToggle} 
-          />
-          <Sidebar 
-            isOpen={sidebarOpen} 
-            onClose={handleDrawerToggle}
+          {/* Navbar */}
+          <Navbar onSidebarToggle={handleSidebarToggle} />
+
+          {/* Sidebar */}
+          <Sidebar
+            isOpen={isOpen}
+            onClose={handleSidebarToggle}
             isMobile={isMobile}
           />
-          
+
           {/* Main Content Area */}
-          <Box 
-            component="main" 
-            sx={{ 
-              flexGrow: 1, 
+          <Box
+            component="main"
+            sx={{
+              flexGrow: 1,
               p: 3,
-              marginLeft: { 
-                xs: 0, 
-                md: sidebarOpen ? '240px' : '56px' 
-              },
+              width: isMobile ? '100%' : `calc(100% - ${isOpen ? 240 : 0}px)`,
+              ml: isMobile ? 0 : isOpen ? '240px' : 0,
               transition: theme.transitions.create('margin', {
                 easing: theme.transitions.easing.sharp,
-                duration: sidebarOpen 
-                  ? theme.transitions.duration.enteringScreen 
-                  : theme.transitions.duration.leavingScreen,
+                duration: theme.transitions.duration.standard,
               }),
-              width: { 
-                xs: '100%', 
-                md: `calc(100% - ${sidebarOpen ? 240 : 56}px)` 
-              },
             }}
           >
             <Toolbar /> {/* Spacer for AppBar */}
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              
               {/* Clients Routes */}
-              <Route path="/clients" element={<Clients />} />
-              <Route path="/clients/:id" element={<ClientView />} />
-              <Route path="/clients/new" element={<ClientForm />} />
-              <Route path="/clients/edit/:id" element={<ClientForm />} />
-              
+              <Route path="/Clients" element={<Clients />} />
+              <Route path="/Clients/:id" element={<ClientView />} />
+              <Route path="/Clients/new" element={<ClientForm />} />
+              <Route path="/Clients/edit/:id" element={<ClientForm />} />
               {/* Appointments Route */}
-              <Route path="/appointments" element={<Appointments />} />
-              
-              {/* Inventory Routes */}
+              <Route path="/Appointments" element={<Appointments />} />
+              {/* Inventory Route */}
               <Route path="/inventory" element={<Inventory />} />
-              
               {/* Invoices Route */}
               <Route path="/invoices" element={<Invoices />} />
-              
               {/* Settings Route */}
               <Route path="/settings" element={<Settings />} />
-              
               {/* 404 Catch-all */}
               <Route path="*" element={<NotFound />} />
             </Routes>

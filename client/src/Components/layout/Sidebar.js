@@ -26,8 +26,8 @@ const Sidebar = ({ isOpen, onClose, isMobile }) => {
   const menuItems = [
     { path: '/', icon: <DashboardIcon />, text: 'Dashboard' },
     { path: '/clients', icon: <PeopleIcon />, text: 'Clients' },
-    { path: '/appointments', icon: <CalendarIcon />, text: 'Appointments' },
-    { path: '/inventory', icon: <InventoryIcon />, text: 'Inventory' },
+    { path: '/Appointments', icon: <CalendarIcon />, text: 'Appointments' },
+    { path: '/Inventory', icon: <InventoryIcon />, text: 'Inventory' },
     { path: '/invoices', icon: <InvoiceIcon />, text: 'Invoices' },
     { path: '/settings', icon: <SettingsIcon />, text: 'Settings' }
   ];

@@ -29,7 +29,7 @@ const Navbar = ({ onSidebarToggle }) => {
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          SmallBiz SaaS
+        CoreSuite
         </Typography>
         <Avatar sx={{ bgcolor: purple[500] }}>A</Avatar>
       </Toolbar>

@@ -1,102 +1,73 @@
-import React, { useState } from 'react';
-import { 
-  Box, 
-  Typography, 
-  Button,
-  Tabs,
-  Tab,
-  useTheme
-} from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Button } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import ClientList from '../Components/clients/ClientList'; // Fixed import path
+import { Link, useNavigate } from 'react-router-dom';
+import ClientList from '../Components/clients/ClientList';
 
 const Clients = () => {
-  const theme = useTheme();
+  const [clients, setClients] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const location = useLocation();
-  const [tabValue, setTabValue] = useState('list');
 
-  const [clients, setClients] = useState([
-    { id: 1, name: 'Acme Corp', email: 'contact@acme.com', phone: '555-1234', status: 'active' },
-    { id: 2, name: 'Globex Inc', email: 'info@globex.com', phone: '555-5678', status: 'active' }
-  ]);
+  // Mock data fetching
+  useEffect(() => {
+    setTimeout(() => {
+      setClients([
+        {
+          id: '1',
+          name: 'Client A',
+          email: 'clienta@example.com',
+          phone: '123-456-7890',
+          status: 'active',
+        },
+        {
+          id: '2',
+          name: 'Client B',
+          email: 'clientb@example.com',
+          phone: '987-654-3210',
+          status: 'inactive',
+        },
+      ]);
+      setLoading(false);
+    }, 1000);
+  }, []);
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
-  const handleEditClient = (client) => {
+  const handleEdit = (client) => {
     navigate(`/clients/edit/${client.id}`);
   };
 
-  const handleDeleteClient = (clientId) => {
-    setClients(clients.filter(client => client.id !== clientId));
-  };
-
-  const handleAddClient = (newClient) => {
-    setClients([...clients, { ...newClient, id: Math.max(...clients.map(c => c.id)) + 1 }]);
-    navigate('/clients');
-  };
-
-  const handleUpdateClient = (updatedClient) => {
-    setClients(clients.map(client => 
-      client.id === updatedClient.id ? updatedClient : client
-    ));
-    navigate('/clients');
+  const handleDelete = (id) => {
+    setClients(clients.filter((client) => client.id !== id));
+    console.log(`Deleted client with id: ${id}`);
   };
 
   return (
     <Box sx={{ p: 3 }}>
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        mb: 3
-      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          mb: 3,
+        }}
+      >
         <Typography variant="h4" sx={{ color: 'primary.main' }}>
-          Client Management
+          Clients
         </Typography>
-        <Button 
-          variant="contained" 
-          color="secondary" 
+        <Button
+          variant="contained"
+          color="secondary"
           startIcon={<Add />}
           component={Link}
           to="/clients/new"
-          sx={{ textTransform: 'none' }}
         >
           Add Client
         </Button>
       </Box>
-
-      <Tabs 
-        value={location.pathname.includes('edit') || location.pathname.includes('new') ? 'form' : 'list'}
-        onChange={handleTabChange}
-        sx={{ mb: 3 }}
-        aria-label="client tabs"
-      >
-        <Tab value="list" label="Client List" />
-        <Tab 
-          value="form" 
-          label={
-            location.pathname.includes('edit') ? 'Edit Client' : 
-            location.pathname.includes('new') ? 'Add Client' : 'Form'
-          } 
-        />
-      </Tabs>
-
-      <Outlet context={{ 
-        clients, 
-        onAddClient: handleAddClient, 
-        onUpdateClient: handleUpdateClient 
-      }} />
-      
-      {location.pathname === '/clients' && (
-        <ClientList 
-          clients={clients} 
-          onEdit={handleEditClient} 
-          onDelete={handleDeleteClient} 
-        />
+      {loading ? (
+        <Typography>Loading clients...</Typography>
+      ) : (
+        <ClientList clients={clients} onEdit={handleEdit} onDelete={handleDelete} />
       )}
     </Box>
   );

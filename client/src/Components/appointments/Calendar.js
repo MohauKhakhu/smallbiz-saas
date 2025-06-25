@@ -1,53 +1,32 @@
-import React from 'react';
-import { Box, Typography, Paper } from '@mui/material';
-import { Calendar as BigCalendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+// C:\Users\Forge L07.STUDENT07\smallbiz-saas\client\src\Components\appointments\Calendar.js
+import React, { useEffect } from 'react';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
 
-// Setup the localizer by providing moment (or globalize, Luxon)
-const localizer = momentLocalizer(moment);
+const Calendar = ({ view, onViewChange }) => {
+  useEffect(() => {
+    console.log(`Calendar view changed to: ${view}`);
+  }, [view]);
 
-const Calendar = () => {
-  // Sample events data
-  const events = [
-    {
-      title: 'Client Meeting',
-      start: new Date(2023, 10, 15, 10, 0),
-      end: new Date(2023, 10, 15, 11, 0),
-    },
-    {
-      title: 'Follow-up Call',
-      start: new Date(2023, 10, 16, 14, 0),
-      end: new Date(2023, 10, 16, 14, 30),
-    },
-  ];
+  const handleEventClick = (info) => {
+    console.log('Event clicked:', info.event);
+  };
 
   return (
-    <Box sx={{ p: 3, height: '80vh' }}>
-      <Typography variant="h4" gutterBottom sx={{ color: 'primary.main', mb: 3 }}>
-        Appointment Calendar
-      </Typography>
-      <Paper elevation={3} sx={{ p: 2, height: '100%' }}>
-        <BigCalendar
-          localizer={localizer}
-          events={events}
-          startAccessor="start"
-          endAccessor="end"
-          style={{ height: '100%' }}
-          defaultView="month"
-          views={['month', 'week', 'day', 'agenda']}
-          eventPropGetter={(event) => ({
-            style: {
-              backgroundColor: '#6a0dad',
-              borderRadius: '4px',
-              opacity: 0.8,
-              color: 'white',
-              border: '0px',
-            },
-          })}
-        />
-      </Paper>
-    </Box>
+    <FullCalendar
+      plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+      initialView={view}
+      headerToolbar={false} // Controlled by parent component
+      events={[
+        { title: 'Meeting', start: new Date() },
+        { title: 'Conference', start: '2023-11-15', end: '2023-11-17' }
+      ]}
+      eventClick={handleEventClick}
+      height="auto"
+      aspectRatio={1.8}
+    />
   );
 };
 

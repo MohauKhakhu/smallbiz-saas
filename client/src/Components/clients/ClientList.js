@@ -1,25 +1,29 @@
-import React from 'react';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow, 
-  Paper, 
+import React, { useState } from 'react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
   IconButton,
   TextField,
-  Box
+  Box,
+  Typography,
 } from '@mui/material';
 import { Edit, Delete, Search } from '@mui/icons-material';
 
-const ClientList = ({ clients, onEdit, onDelete }) => {
-  const [searchTerm, setSearchTerm] = React.useState('');
+const ClientList = ({ clients = [], onEdit = () => {}, onDelete = () => {} }) => {
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredClients = clients.filter(client => 
-    client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    client.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredClients = Array.isArray(clients)
+    ? clients.filter(
+        (client) =>
+          client.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          client.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   return (
     <Box>
@@ -30,12 +34,11 @@ const ClientList = ({ clients, onEdit, onDelete }) => {
         size="small"
         sx={{ mb: 2 }}
         InputProps={{
-          startAdornment: <Search sx={{ color: 'action.active', mr: 1 }} />
+          startAdornment: <Search sx={{ color: 'action.active', mr: 1 }} />,
         }}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      
       <TableContainer component={Paper}>
         <Table>
           <TableHead sx={{ bgcolor: 'primary.light' }}>
@@ -47,21 +50,29 @@ const ClientList = ({ clients, onEdit, onDelete }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredClients.map((client) => (
-              <TableRow key={client.id}>
-                <TableCell>{client.name}</TableCell>
-                <TableCell>{client.email}</TableCell>
-                <TableCell>{client.phone}</TableCell>
-                <TableCell>
-                  <IconButton color="primary" onClick={() => onEdit(client)}>
-                    <Edit />
-                  </IconButton>
-                  <IconButton color="error" onClick={() => onDelete(client.id)}>
-                    <Delete />
-                  </IconButton>
+            {filteredClients.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={4}>
+                  <Typography align="center">No clients found</Typography>
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              filteredClients.map((client) => (
+                <TableRow key={client.id}>
+                  <TableCell>{client.name || 'N/A'}</TableCell>
+                  <TableCell>{client.email || 'N/A'}</TableCell>
+                  <TableCell>{client.phone || 'N/A'}</TableCell>
+                  <TableCell>
+                    <IconButton color="primary" onClick={() => onEdit(client)}>
+                      <Edit />
+                    </IconButton>
+                    <IconButton color="error" onClick={() => onDelete(client.id)}>
+                      <Delete />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
